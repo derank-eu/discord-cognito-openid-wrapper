@@ -1,40 +1,40 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-    ./rego-api-identity-proxy
+  ./rego-api-identity-proxy
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
-    Function:
-        Runtime: nodejs8.10
-        Timeout: 15
-        Environment:
-          Variables:
-            GITHUB_CLIENT_ID:
-              Ref: GitHubClientIdParameter
-            GITHUB_CLIENT_SECRET:
-              Ref: GitHubClientSecretParameter
-            COGNITO_REDIRECT_URI:
-              Ref: CognitoRedirectUriParameter
-            GITHUB_API_URL:
-              Ref: GitHubUrlParameter
-            GITHUB_LOGIN_URL:
-              Ref: GitHubLoginUrlParameter
+  Function:
+    Runtime: nodejs8.10
+    Timeout: 15
+    Environment:
+      Variables:
+        DISCORD_CLIENT_ID:
+          Ref: DiscordClientIdParameter
+        DISCORD_CLIENT_SECRET:
+          Ref: DiscordClientSecretParameter
+        COGNITO_REDIRECT_URI:
+          Ref: CognitoRedirectUriParameter
+        DISCORD_API_URL:
+          Ref: DiscordUrlParameter
+        DISCORD_LOGIN_URL:
+          Ref: DiscordLoginUrlParameter
 
 Parameters:
-  GitHubClientIdParameter:
+  DiscordClientIdParameter:
     Type: String
-  GitHubClientSecretParameter:
+  DiscordClientSecretParameter:
     Type: String
   CognitoRedirectUriParameter:
     Type: String
-  GitHubUrlParameter:
+  DiscordUrlParameter:
     Type: String
-    Default: "https://api.github.com"
+    Default: 'https://discordapp.com/api'
     MinLength: 1
-  GitHubLoginUrlParameter:
+  DiscordLoginUrlParameter:
     Type: String
-    Default: "https://github.com"
+    Default: 'https://discordapp.com/api'
     MinLength: 1
 
 Resources:
@@ -105,6 +105,6 @@ Resources:
             Method: get
 
 Outputs:
-    GitHubShimIssuer:
-      Description: "GitHub OpenID Shim Issuer"
-      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+  DiscordShimIssuer:
+    Description: 'Discord OpenID Shim Issuer'
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'

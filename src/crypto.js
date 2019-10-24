@@ -1,7 +1,7 @@
 const JSONWebKey = require('json-web-key');
 const jwt = require('jsonwebtoken');
 
-const { GITHUB_CLIENT_ID } = require('./config');
+const { DISCORD_CLIENT_ID } = require('./config');
 
 const KEY_ID = 'jwtRS256';
 const cert = require('../jwtRS256.key');
@@ -19,7 +19,7 @@ module.exports = {
       {
         ...payload,
         iss: `https://${host}`,
-        aud: GITHUB_CLIENT_ID
+        aud: DISCORD_CLIENT_ID
       },
       cert,
       {

@@ -15,11 +15,13 @@ const getUserInfo = accessToken =>
         // and http://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
         const claims = {
           sub: `${userDetails.id}`, // OpenID requires a string
-          name: userDetails.name,
-          preferred_username: userDetails.login,
-          profile: userDetails.html_url,
-          picture: userDetails.avatar_url,
-          website: userDetails.blog,
+          name: `${userDetails.username}#${userDetails.discriminator}`,
+          preferred_username: userDetails.username,
+          profile: 'https://discordapp.com',
+          picture: `https://cdn.discordapp.com/avatars/${userDetails.id}/${
+            userDetails.avatar
+          }.png`,
+          website: 'https://discordapp.com',
           updated_at: NumericDate(
             // OpenID requires the seconds since epoch in UTC
             new Date(Date.parse(userDetails.updated_at))
@@ -29,31 +31,32 @@ const getUserInfo = accessToken =>
       }),
     github()
       .getUserEmails(accessToken)
-      .then(userEmails => {
-        const primaryEmail = userEmails.find(email => email.primary);
+      .then(userData => {
+        const primaryEmail = userData.email;
         if (primaryEmail === undefined) {
           throw new Error('User did not have a primary email address');
         }
         const claims = {
           email: primaryEmail.email,
-          email_verified: primaryEmail.verified
+          email_verified: userData.verified
         };
         return claims;
       })
   ]).then(claims => claims.reduce((acc, claim) => ({ ...acc, ...claim }), {}));
 
-const getAuthorizeUrl = (client_id, scope, state, response_type) =>  github().getAuthorizeUrl(client_id, scope, state, response_type);
+const getAuthorizeUrl = (client_id, scope, state, response_type) =>
+  github().getAuthorizeUrl(client_id, scope, state, response_type);
 
 const getTokens = (code, state, host) =>
   github()
     .getToken(code, state)
-    .then(githubToken => {
+    .then(discordToken => {
       // GitHub returns scopes separated by commas
       // But OAuth wants them to be spaces
       // https://tools.ietf.org/html/rfc6749#section-5.1
       // Also, we need to add openid as a scope,
       // since GitHub will have stripped it
-      const scope = `openid ${githubToken.scope.replace(',', ' ')}`;
+      const scope = `openid ${discordToken.scope.replace(',', ' ')}`;
 
       // ** JWT ID Token required fields **
       // iss - issuer https url
@@ -73,7 +76,7 @@ const getTokens = (code, state, host) =>
 
         const idToken = crypto.makeIdToken(payload, host);
         const tokenResponse = {
-          ...githubToken,
+          ...discordToken,
           scope,
           id_token: idToken
         };
@@ -124,4 +127,10 @@ const getConfigFor = host => ({
   ]
 });
 
-module.exports = { getTokens, getUserInfo, getJwks, getConfigFor, getAuthorizeUrl };
+module.exports = {
+  getTokens,
+  getUserInfo,
+  getJwks,
+  getConfigFor,
+  getAuthorizeUrl
+};

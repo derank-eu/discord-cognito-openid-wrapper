@@ -1,11 +1,8 @@
-# GitHub OpenID Connect Wrapper for Cognito
+# Discord OpenID Connect Wrapper for Cognito
 
-[![Build Status](https://travis-ci.org/TimothyJones/github-cognito-openid-wrapper.svg?branch=master)](https://travis-ci.org/TimothyJones/github-cognito-openid-wrapper)
-[![Maintainability](https://api.codeclimate.com/v1/badges/f787719be529b1c0e8ee/maintainability)](https://codeclimate.com/github/TimothyJones/github-openid-wrapper/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/f787719be529b1c0e8ee/test_coverage)](https://codeclimate.com/github/TimothyJones/github-openid-wrapper/test_coverage)
-[![Known Vulnerabilities](https://snyk.io/test/github/TimothyJones/github-cognito-openid-wrapper/badge.svg?targetFile=package.json)](https://snyk.io/test/github/TimothyJones/github-cognito-openid-wrapper?targetFile=package.json)
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+## This repository is a direct fork from [github-cognito-openid-wrapper](https://github.com/TimothyJones/github-cognito-openid-wrapper). I just modify the source code to make it work with Discord API.
 
+# Original Author README:
 
 Do you want to add GitHub as an OIDC (OpenID Connect) provider to an AWS Cognito User Pool? Have you run in to trouble because GitHub only provides OAuth2.0 endpoints, and doesn't support OpenID Connect?
 
@@ -291,7 +288,7 @@ for more details.
 
 ### Can I use this shim to connect to GitHub directly from another OpenID client?
 
-Yes. This implementation isn't complete, as it focusses exclusively on 
+Yes. This implementation isn't complete, as it focusses exclusively on
 Cognito's requirements. However, it does follow the OpenID spec, and is
 complete enough to be able to use it as an OpenID connect provider. See the
 missing features section above for one or two caveats.

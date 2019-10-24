@@ -2,7 +2,12 @@ const openid = require('../openid');
 
 module.exports = respond => ({
   authorize: (client_id, scope, state, response_type) => {
-    const authorizeUrl = openid.getAuthorizeUrl(client_id, scope, state, response_type);
+    const authorizeUrl = openid.getAuthorizeUrl(
+      client_id,
+      scope,
+      state,
+      response_type
+    );
     respond.redirect(authorizeUrl);
   },
   userinfo: tokenPromise => {
