@@ -48,12 +48,14 @@ module.exports = (apiBaseUrl, loginBaseUrl) => {
   const urls = getApiEndpoints(apiBaseUrl, loginBaseUrl || apiBaseUrl);
   return {
     getAuthorizeUrl: (client_id, scope, state, response_type) => {
-      console.log(scope);
-      // TODO: UPDATE SCOPE TO REMOVE OPENID
+      const cleanScope = scope
+        .split(' ')
+        .filter(i => i !== 'openid')
+        .join(' ');
       return `${
         urls.oauthAuthorize
       }?client_id=${client_id}&scope=${encodeURIComponent(
-        'identify email'
+        cleanScope
       )}&state=${state}&response_type=${response_type}`;
     },
     getUserDetails: accessToken =>
