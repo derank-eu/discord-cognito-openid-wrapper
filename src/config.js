@@ -4,5 +4,7 @@ module.exports = {
   COGNITO_REDIRECT_URI: process.env.COGNITO_REDIRECT_URI,
   DISCORD_API_URL: process.env.DISCORD_API_URL,
   DISCORD_LOGIN_URL: process.env.DISCORD_LOGIN_URL,
+  SCOPES_SUPPORTED: process.env.SCOPES_SUPPORTED,
+  CLAIMS_SUPPORTED: process.env.CLAIMS_SUPPORTED,
   PORT: parseInt(process.env.PORT, 10) || undefined
 };

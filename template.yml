@@ -1,12 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  ./rego-api-identity-proxy
+  Discord cognito openid wrapper
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Runtime: nodejs8.10
+    Runtime: nodejs20.x
     Timeout: 15
     Environment:
       Variables:
@@ -20,6 +20,10 @@ Globals:
           Ref: DiscordUrlParameter
         DISCORD_LOGIN_URL:
           Ref: DiscordLoginUrlParameter
+        SCOPES_SUPPORTED:
+          Ref: ScopesSupportedParameter
+        CLAIMS_SUPPORTED:
+          Ref: ClaimsSupportedParameter
 
 Parameters:
   DiscordClientIdParameter:
@@ -30,11 +34,17 @@ Parameters:
     Type: String
   DiscordUrlParameter:
     Type: String
-    Default: 'https://discordapp.com/api'
+    Default: 'https://discord.com'
     MinLength: 1
   DiscordLoginUrlParameter:
     Type: String
-    Default: 'https://discordapp.com/api'
+    Default: 'https://discord.com'
+    MinLength: 1
+  ScopesSupportedParameter:
+    Type: String
+    MinLength: 1
+  ClaimsSupportedParameter:
+    Type: String
     MinLength: 1
 
 Resources:

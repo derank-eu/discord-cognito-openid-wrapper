@@ -1,11 +1,12 @@
 const JSONWebKey = require('json-web-key');
 const jwt = require('jsonwebtoken');
+const fs = require('node:fs');
 
 const { DISCORD_CLIENT_ID } = require('./config');
 
 const KEY_ID = 'jwtRS256';
-const cert = require('../jwtRS256.key');
-const pubKey = require('../jwtRS256.key.pub');
+const cert = fs.readFileSync("./jwtRS256.key");
+const pubKey = fs.readFileSync("./jwtRS256.key.pub");
 
 module.exports = {
   getPublicKey: () => ({

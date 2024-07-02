@@ -1,6 +1,7 @@
 const { NumericDate } = require('./helpers');
 const crypto = require('./crypto');
 const github = require('./github');
+const config = require('./config')
 
 const getJwks = () => ({ keys: [crypto.getPublicKey()] });
 
@@ -99,7 +100,7 @@ const getConfigFor = host => ({
   // end_session_endpoint: 'https://server.example.com/connect/end_session',
   jwks_uri: `https://${host}/.well-known/jwks.json`,
   // registration_endpoint: 'https://server.example.com/connect/register',
-  scopes_supported: ['openid', 'read:user', 'user:email'],
+  scopes_supported: config.SCOPES_SUPPORTED.split(","),
   response_types_supported: [
     'code',
     'code id_token',
@@ -112,19 +113,7 @@ const getConfigFor = host => ({
   id_token_signing_alg_values_supported: ['RS256'],
   request_object_signing_alg_values_supported: ['none'],
   display_values_supported: ['page', 'popup'],
-  claims_supported: [
-    'sub',
-    'name',
-    'preferred_username',
-    'profile',
-    'picture',
-    'website',
-    'email',
-    'email_verified',
-    'updated_at',
-    'iss',
-    'aud'
-  ]
+  claims_supported: config.CLAIMS_SUPPORTED.split(",")
 });
 
 module.exports = {

@@ -10,15 +10,27 @@ require_binary sam
 
 # Ensure configuration is present
 
-if [ ! -f "$PROJECT_ROOT/config.sh" ]; then
+if [ ! -f "${PROJECT_ROOT}/config.sh" ]; then
   echo "ERROR: config.sh is missing. Copy example-config.sh and modify as appropriate."
   echo "   cp example-config.sh config.sh"
   exit 1
 fi
 source ./config.sh
 
+cp jwtRS256.key dist-lambda/.
+cp jwtRS256.key.pub dist-lambda/.
 
-OUTPUT_TEMPLATE_FILE="$PROJECT_ROOT/serverless-output.yml"
-aws s3 mb "s3://$BUCKET_NAME" --region "$REGION" || true
-sam package --template-file template.yml --output-template-file "$OUTPUT_TEMPLATE_FILE"  --s3-bucket "$BUCKET_NAME"
-sam deploy --region "$REGION" --template-file "$OUTPUT_TEMPLATE_FILE" --stack-name "$STACK_NAME" --parameter-overrides DiscordClientIdParameter="$DISCORD_CLIENT_ID" DiscordClientSecretParameter="$DISCORD_CLIENT_SECRET" CognitoRedirectUriParameter="$COGNITO_REDIRECT_URI" --capabilities CAPABILITY_IAM
+OUTPUT_TEMPLATE_FILE="${PROJECT_ROOT}/serverless-output.yml"
+aws s3 mb "s3://${BUCKET_NAME}" --region "${REGION}" || true
+sam package --template-file template.yml --output-template-file "${OUTPUT_TEMPLATE_FILE}"  --s3-bucket "${BUCKET_NAME}"
+sam deploy \
+  --region "${REGION}" \
+  --template-file "${OUTPUT_TEMPLATE_FILE}" \
+  --stack-name "${STACK_NAME}" \
+  --parameter-overrides \
+    DiscordClientIdParameter="${DISCORD_CLIENT_ID}" \
+    DiscordClientSecretParameter="${DISCORD_CLIENT_SECRET}" \
+    CognitoRedirectUriParameter="${COGNITO_REDIRECT_URI}" \
+    ScopesSupportedParameter="${SCOPES_SUPPORTED}" \
+    ClaimsSupportedParameter="${CLAIMS_SUPPORTED}" \
+  --capabilities CAPABILITY_IAM
