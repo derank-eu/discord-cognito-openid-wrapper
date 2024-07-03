@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 const axios = require('axios');
 const btoa = require('btoa');
+const { logger } = require('./logger');
 const {
   DISCORD_CLIENT_ID,
   DISCORD_CLIENT_SECRET,
@@ -9,12 +10,7 @@ const {
   // DISCORD_LOGIN_URL
 } = require('./config');
 
-const getApiEndpoints = (apiBaseUrl = DISCORD_API_URL) => ({
-  userDetails: `${apiBaseUrl}/users/@me`,
-  userEmails: `${apiBaseUrl}/users/@me`,
-  oauthToken: `${apiBaseUrl}/oauth2/token`,
-  oauthAuthorize: `${apiBaseUrl}/oauth2/authorize`
-});
+const { discordEndpoints } = require('./endpoints');
 
 const check = response => {
   if (response.data) {
@@ -44,35 +40,54 @@ const discordGet = (url, accessToken) =>
     }
   });
 
-module.exports = (apiBaseUrl, loginBaseUrl) => {
-  const urls = getApiEndpoints(apiBaseUrl, loginBaseUrl || apiBaseUrl);
+module.exports = () => {
   return {
     getAuthorizeUrl: (client_id, scope, state, response_type) => {
       const cleanScope = scope
         .split(' ')
         .filter(i => i !== 'openid')
+        .map(i => i.split("/").pop()) // For compatibility with cognito custom scopes
         .join(' ');
       return `${
-        urls.oauthAuthorize
+        discordEndpoints.oauthAuthorize
       }?client_id=${client_id}&scope=${encodeURIComponent(
         cleanScope
       )}&state=${state}&response_type=${response_type}`;
     },
     getUserDetails: accessToken =>
-      discordGet(urls.userDetails, accessToken).then(check),
+      discordGet(discordEndpoints.userDetails, accessToken).then(check),
     getUserEmails: accessToken =>
-      discordGet(urls.userEmails, accessToken).then(check),
-    getToken: code =>
-      axios({
+      discordGet(discordEndpoints.userEmails, accessToken).then(check),
+    getToken: code => {
+      const request = {
         method: 'POST',
-        url: `${
-          urls.oauthToken
-        }?grant_type=authorization_code&redirect_uri=${COGNITO_REDIRECT_URI}&code=${code}`,
+        url: `${discordEndpoints.oauthToken}`,
         headers: {
           Authorization: `Basic ${btoa(
-            `${DISCORD_CLIENT_ID}:${DISCORD_CLIENT_SECRET}`
-          )}`
-        }
-      }).then(check)
+            `${DISCORD_CLIENT_ID}:${DISCORD_CLIENT_SECRET}`,
+          )}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: `grant_type=authorization_code&redirect_uri=${COGNITO_REDIRECT_URI}&code=${code}&client_id=${DISCORD_CLIENT_ID}&client_secret=${DISCORD_CLIENT_SECRET}`
+      }
+      logger.info({
+        message: "Discord getToken request",
+        component: "github.js",
+        operation: "getToken",
+        request
+      })
+      return axios(request).then((response) => {
+        logger.info({
+          message: "Discord getToken response",
+          component: "github.js",
+          operation: "getToken",
+          response: {
+            headers: response.headers,
+            body: response.data.toString()
+          }
+        })
+        return check(response);
+      });
+    }
   };
 };

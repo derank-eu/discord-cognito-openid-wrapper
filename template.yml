@@ -24,8 +24,13 @@ Globals:
           Ref: ScopesSupportedParameter
         CLAIMS_SUPPORTED:
           Ref: ClaimsSupportedParameter
+        LOG_LEVEL:
+          Ref: PowertoolsLogLevel
 
 Parameters:
+  PowertoolsLogLevel:
+    Type: String
+    Default: 'INFO'
   DiscordClientIdParameter:
     Type: String
   DiscordClientSecretParameter:

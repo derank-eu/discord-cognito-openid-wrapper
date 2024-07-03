@@ -1,6 +1,7 @@
 const responder = require('./responder');
 const auth = require('./auth');
 const controllers = require('../controllers');
+const { discordEndpoints } = require('../../endpoints');
 
 module.exports = {
   userinfo: (req, res) => {
@@ -15,7 +16,7 @@ module.exports = {
   jwks: (req, res) => controllers(responder(res)).jwks(),
   authorize: (req, res) =>
     responder(res).redirect(
-      `https://discordapp.com/api/oauth2/authorize?client_id=${
+      `${discordEndpoints.oauthAuthorize}?client_id=${
         req.query.client_id
       }&scope=${req.query.scope}&state=${req.query.state}&response_type=${
         req.query.response_type
